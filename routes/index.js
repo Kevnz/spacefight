@@ -4,5 +4,5 @@
  */
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Kickstarted App' });
+  res.render('index', { title: 'Space Fight' });
 };
