@@ -14,9 +14,14 @@ var gameInit = function () {
     });
 
     Crafty.scene('main', function () {
+        var enemy = Crafty.e("2D, Canvas, anikin, Collision")
+            .attr({move: {left: false, right: false, up: false, down: false}, xspeed: 0, yspeed: 0, decay: 0.9,
+                x: Crafty.viewport.width / 2, y: Crafty.viewport.height / 3, score: 0, zIndex:2})
+            .origin("center")
+            .collision();
         var player = Crafty.e("2D, Canvas, fighter, Controls, Collision")
-            .attr({move: {left: false, right: false, up: false, down: false}, xspeed: 0, yspeed: 0, decay: 0.9, 
-                x: Crafty.viewport.width / 2, y: Crafty.viewport.height / 2, score: 0})
+            .attr({move: {left: false, right: false, up: false, down: false}, xspeed: 0, yspeed: 0, decay: 0.9,
+                x: Crafty.viewport.width / 2, y: Crafty.viewport.height / 2, score: 0, zIndex:2})
             .origin("center")
             .bind("KeyDown", function(e) {
                 //on keydown, set the move booleans
@@ -36,12 +41,13 @@ var gameInit = function () {
                     console.log(ro);
                     Crafty.e("2D, DOM, Color, bullet")
                         .attr({
-                            x: (this._x +32 ) + ro, 
-                            y: (this._y + 32)+ ro, 
-                            w: 2, 
-                            h: 5, 
-                            rotation: this._rotation, 
-                            xspeed: 20 * Math.sin(this._rotation / 57.3), 
+                            x: (this._x +32 ),
+                            y: (this._y + 32),
+                            w: 2,
+                            h: 5,
+                            zIndex: 1,
+                            rotation: this._rotation,
+                            xspeed: 20 * Math.sin(this._rotation / 57.3),
                             yspeed: 20 * Math.cos(this._rotation / 57.3)
                         })
                         .color("rgb(255, 0, 0)")
