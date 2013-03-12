@@ -7,14 +7,14 @@ var gameInit = function () {
     Crafty.init();
     Crafty.canvas.init();
 
-    Crafty.load(['/images/sprite.png', '/images/explosion.png'], function () {
-        Crafty.sprite(64, '/images/sprite.png', {
+    Crafty.load(['images/sprite.png', 'images/explosion.png'], function () {
+        Crafty.sprite(64, 'images/sprite.png', {
             fighter: [0,0],
             ship: [1,0],
             naboo: [2,0],
             anikin: [3,0]
         });
-        Crafty.sprite(128, "/images/explosion.png", {
+        Crafty.sprite(128, "images/explosion.png", {
             explosion1: [0, 0],
             explosion2: [0, 1],
             explosion3: [0, 2]
