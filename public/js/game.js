@@ -45,10 +45,11 @@ var gameInit = function () {
                 x = location.x;
                 y = location.y;
             }
-            xspeed = 2;
+            xspeed = 3;
             yspeed = 2;
+            var rotation = 4;
             enemy = Crafty.e("2D, Canvas, anikin, Collision, enemy")
-            .attr({move: {left: false, right: false, up: false, down: false}, xspeed: xspeed, yspeed: yspeed, decay: 0.9,
+            .attr({move: {left: false, right: false, up: false, down: false},rotation:rotation, xspeed: xspeed, yspeed: yspeed, decay: 0.9,
                 x: x, y: y, score: 0, zIndex:2, status:10})
             .origin("center")
             .onHit("bullet", function (e) {
@@ -70,6 +71,7 @@ var gameInit = function () {
                 //This should be some form of componant
                 this.x += this.xspeed;
                 this.y -= this.yspeed;
+                this.rotation = 60;
                 //if ship goes out of bounds, put him back
                 if(this._x > Crafty.viewport.width) {
                     this.x = -64;
@@ -104,7 +106,7 @@ var gameInit = function () {
                     Crafty.audio.play("Blaster");
                     //create a bullet entity
                     var ro = this._rotation  % 360;
-                    console.log(ro);
+                    console.log(ro);    
                     Crafty.e("2D, DOM, Color, bullet")
                         .attr({
                             x: (this._x +32 ),
