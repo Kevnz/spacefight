@@ -1,11 +1,5 @@
 var randRange = function (from, to, exclude) {
-    var res = Math.floor(Math.random() * (to - from + 1) + from);
-    if (!exclude) return res;
-    while(res===exclude){
-        res = randRange(from, to, exclude);
-    }
-    return res;
-    
+    return Math.floor(Math.random() * (to - from + 1) + from);
 };
 
 var gameInit = function () {
@@ -51,8 +45,8 @@ var gameInit = function () {
                 x = location.x;
                 y = location.y;
             }
-            xspeed = randRange(-4, 4, 0);
-            yspeed = randRange(-4, 4, 0);
+            xspeed = randRange(-4, 4);
+            yspeed = randRange(-4, 4);
             var rotation = (((Math.atan2(yspeed, xspeed))*(180/Math.PI)) * -1)+90; //offset 90 for sprite
 
             var enemy = Crafty.e("2D, Canvas, anikin, Collision, enemy")
@@ -76,8 +70,12 @@ var gameInit = function () {
             })
             .bind("EnterFrame", function(e) {
                 if(e.frame % 100 === 0) {
-                    xspeed = randRange(-4, 4, 0);
-                    yspeed = randRange(-4, 4, 0);
+                    xspeed = randRange(-4, 4);
+                    yspeed = randRange(-4, 4);
+                    if(xspeed === 0 && yspeed === 0){
+                        xspeed = randRange(-4, 4);
+                        yspeed = randRange(-4, 4);
+                    }
                     var rotation = (((Math.atan2(yspeed, xspeed))*(180/Math.PI)) * -1)+90;
                     this._rotation = rotation;
                     this.xspeed = xspeed;
