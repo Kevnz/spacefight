@@ -1,5 +1,11 @@
-var randRange = function (from, to) {
-    return Math.floor(Math.random() * (to - from + 1) + from);
+var randRange = function (from, to, exclude) {
+    var res = Math.floor(Math.random() * (to - from + 1) + from);
+    if (!exclude) return res;
+    while(res===exclude){
+        res = randRange(from, to, exclude);
+    }
+    return res;
+    
 };
 
 var gameInit = function () {
@@ -45,10 +51,11 @@ var gameInit = function () {
                 x = location.x;
                 y = location.y;
             }
-            xspeed = 3;
-            yspeed = 2;
-            var rotation = 4;
-            enemy = Crafty.e("2D, Canvas, anikin, Collision, enemy")
+            xspeed = randRange(-4, 4, 0);
+            yspeed = randRange(-4, 4, 0);
+            var rotation = (((Math.atan2(yspeed, xspeed))*(180/Math.PI)) * -1)+90; //offset 90 for sprite
+
+            var enemy = Crafty.e("2D, Canvas, anikin, Collision, enemy")
             .attr({move: {left: false, right: false, up: false, down: false},rotation:rotation, xspeed: xspeed, yspeed: yspeed, decay: 0.9,
                 x: x, y: y, score: 0, zIndex:2, status:10})
             .origin("center")
@@ -67,11 +74,23 @@ var gameInit = function () {
                 Crafty.trigger('enemyDestroyed');
                 setTimeout(generateEnemy, 800);
             })
-            .bind("EnterFrame", function() {
-                //This should be some form of componant
-                this.x += this.xspeed;
-                this.y -= this.yspeed;
-                this.rotation = 60;
+            .bind("EnterFrame", function(e) {
+                if(e.frame % 100 === 0) {
+                    xspeed = randRange(-4, 4, 0);
+                    yspeed = randRange(-4, 4, 0);
+                    var rotation = (((Math.atan2(yspeed, xspeed))*(180/Math.PI)) * -1)+90;
+                    this._rotation = rotation;
+                    this.xspeed = xspeed;
+                    this.yspeed = yspeed;
+                    this.x += this.xspeed;
+                    this.y -= this.yspeed;
+
+                }else{
+                    this.x += this.xspeed;
+                    this.y -= this.yspeed;
+                }
+
+                //this.rotation = 60;Math.atan2(this.yspeed, this.xspeed);
                 //if ship goes out of bounds, put him back
                 if(this._x > Crafty.viewport.width) {
                     this.x = -64;
@@ -106,7 +125,6 @@ var gameInit = function () {
                     Crafty.audio.play("Blaster");
                     //create a bullet entity
                     var ro = this._rotation  % 360;
-                    console.log(ro);    
                     Crafty.e("2D, DOM, Color, bullet")
                         .attr({
                             x: (this._x +32 ),

@@ -1,5 +1,25 @@
 body {
 	background-color:black;
-	background-image:url('../images/starfield.gif');
+
 	color:white;
+}
+.intro {
+	padding: 12px;
+	background-image: linear-gradient(bottom, rgb(0,0,0) 43%, rgb(46,45,44) 74%, rgb(82,82,82) 94%);
+	background-image: -o-linear-gradient(bottom, rgb(0,0,0) 43%, rgb(46,45,44) 74%, rgb(82,82,82) 94%);
+	background-image: -moz-linear-gradient(bottom, rgb(0,0,0) 43%, rgb(46,45,44) 74%, rgb(82,82,82) 94%);
+	background-image: -webkit-linear-gradient(bottom, rgb(0,0,0) 43%, rgb(46,45,44) 74%, rgb(82,82,82) 94%);
+	background-image: -ms-linear-gradient(bottom, rgb(0,0,0) 43%, rgb(46,45,44) 74%, rgb(82,82,82) 94%);
+
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.43, rgb(0,0,0)),
+		color-stop(0.74, rgb(46,45,44)),
+		color-stop(0.94, rgb(82,82,82))
+	);
+}
+#cr-stage {
+	background-image:url('../images/starfield.gif');
 }
