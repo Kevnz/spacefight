@@ -23,19 +23,7 @@ var gameInit = function () {
     });
 
     Crafty.scene('main', function () {
-        Crafty.c("RandomExplosion", {
-            init: function () {
-                var rand = Crafty.math.randomInt(1, 3);
-                this.addComponent("2D", "Canvas", "explosion" + rand, "SpriteAnimation")
-                    .animate("explode1", 0, 0, 16)
-                    .animate("explode2", 0, 1, 16)
-                    .animate("explode3", 0, 2, 16)
-                    .animate("explode" + rand, 10, 0)
-                    .bind("AnimationEnd", function () {
-                        this.destroy();
-                    });
-            }
-        });
+
         var generateEnemy = function (location) {
             var x,y,xspeed,yspeed;
             if(!location){
@@ -49,9 +37,8 @@ var gameInit = function () {
             yspeed = randRange(-4, 4);
             var rotation = (((Math.atan2(yspeed, xspeed))*(180/Math.PI)) * -1)+90; //offset 90 for sprite
 
-            var enemy = Crafty.e("2D, Canvas, anikin, Collision, enemy")
-            .attr({move: {left: false, right: false, up: false, down: false},rotation:rotation, xspeed: xspeed, yspeed: yspeed, decay: 0.9,
-                x: x, y: y, score: 0, zIndex:2, status:10})
+            var enemy = Crafty.e("Actor, anikin, enemy")
+            .attr({rotation:rotation, xspeed: xspeed, yspeed: yspeed, x: x, y: y, status:10})
             .origin("center")
             .onHit("bullet", function (e) {
                 this.status = this.status -1;
@@ -59,6 +46,10 @@ var gameInit = function () {
                     this.destroy();
                 }
                 e[0].obj.destroy();
+            })
+            .onHit("Actor", function (e) {
+                this.x = this.x-32;
+                this.y = this.y-32;
             })
             .bind('Remove', function(){
                 Crafty.e("RandomExplosion").attr({
@@ -106,11 +97,26 @@ var gameInit = function () {
             .collision();
         };
         generateEnemy({x: Crafty.viewport.width / 2,y: Crafty.viewport.height / 3});
-        var player = Crafty.e("2D, Canvas, fighter, Controls, Collision")
-            .attr({move: {left: false, right: false, up: false, down: false}, xspeed: 0, yspeed: 0, decay: 0.9,
-                x: Crafty.viewport.width / 2, y: Crafty.viewport.height / 2, score: 0, zIndex:2})
-            .origin("center")
 
+        var player = Crafty.e("Actor, fighter, Controls")
+            .attr({move: {left: false, right: false, up: false, down: false}, xspeed: 0, yspeed: 0, decay: 0.9,
+                x: Crafty.viewport.width / 2, y: Crafty.viewport.height / 2, score: 0, zIndex:2, hp: 3})
+            .origin("center")
+            .onHit("Actor", function (e) {
+                this.hp = this.hp - 1;
+                if(this.hp === 0){
+                    this.destroy();
+                }
+                this.x = this.x+32;
+                this.y = this.y+32;
+            })
+            .bind('Remove', function(){
+                Crafty.e("RandomExplosion").attr({
+                    x: this.x - 32,
+                    y: this.y - 12
+                });
+                Crafty.trigger('playerDestroyed');
+            })
             .bind("KeyDown", function (e) {
                 //on keydown, set the move booleans
                 if(e.keyCode === Crafty.keys.RIGHT_ARROW) {
@@ -190,5 +196,14 @@ var gameInit = function () {
                     this.y = Crafty.viewport.height;
                 }
             }).collision();
+        
+
+        Crafty.bind('enemyDestroyed', function () {
+
+        });  
+        Crafty.bind('playerDestroyed', function (e) {
+            //do something
+            Crafty.scene('the-end');
+        });
     });
 };
