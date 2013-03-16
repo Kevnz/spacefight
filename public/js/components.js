@@ -1,5 +1,5 @@
 Crafty.c('Actor', {
-  init: function() {
+  init: function () {
     this.requires('2D, Canvas, Collision');
   }
 });
@@ -16,5 +16,14 @@ Crafty.c("RandomExplosion", {
             .bind("AnimationEnd", function () {
                 this.destroy();
             });
+    }
+});
+
+Crafty.c("RandomAstroid", {
+    init: function () {
+        var rand = Crafty.math.randomInt(1, 2);
+        this.addComponent("2D", "Canvas", "astroid" + rand)
+ 		
+
     }
 });

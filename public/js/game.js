@@ -1,13 +1,10 @@
-var randRange = function (from, to, exclude) {
-    return Math.floor(Math.random() * (to - from + 1) + from);
-};
-
+ 
 var gameInit = function () {
 
     Crafty.init();
     Crafty.canvas.init();
 
-    Crafty.load(['images/sprite.png', 'images/explosion.png'], function () {
+    Crafty.load(['images/sprite.png', 'images/explosion.png', 'images/astroids.png'], function () {
         Crafty.sprite(64, 'images/sprite.png', {
             fighter: [0,0],
             ship: [1,0],
@@ -19,6 +16,10 @@ var gameInit = function () {
             explosion2: [0, 1],
             explosion3: [0, 2]
         });
+        Crafty.sprite(64, 'images/astroids.png', {
+            astroid1: [0,0],
+            astroid2: [1,0]
+        });
         Crafty.scene('main');
     });
 
@@ -27,18 +28,18 @@ var gameInit = function () {
         var generateEnemy = function (location) {
             var x,y,xspeed,yspeed;
             if(!location){
-                x = randRange(100, Crafty.viewport.width - 100) ;
-                y = randRange(100, Crafty.viewport.height - 100);
+                x = Crafty.math.randomInt(100, Crafty.viewport.width - 100) ;
+                y = Crafty.math.randomInt(100, Crafty.viewport.height - 100);
             } else {
                 x = location.x;
                 y = location.y;
             }
-            xspeed = randRange(-4, 4);
-            yspeed = randRange(-4, 4);
+            xspeed = Crafty.math.randomInt(-4, 4);
+            yspeed = Crafty.math.randomInt(-4, 4);
             var rotation = (((Math.atan2(yspeed, xspeed))*(180/Math.PI)) * -1)+90; //offset 90 for sprite
 
             var enemy = Crafty.e("Actor, anikin, enemy")
-            .attr({rotation:rotation, xspeed: xspeed, yspeed: yspeed, x: x, y: y, status:10})
+            .attr({rotation:rotation, xspeed: xspeed, yspeed: yspeed, x: x, y: y, status:10,hp: 10})
             .origin("center")
             .onHit("bullet", function (e) {
                 this.status = this.status -1;
@@ -61,11 +62,11 @@ var gameInit = function () {
             })
             .bind("EnterFrame", function(e) {
                 if(e.frame % 100 === 0) {
-                    xspeed = randRange(-4, 4);
-                    yspeed = randRange(-4, 4);
+                    xspeed = Crafty.math.randomInt(-4, 4);
+                    yspeed = Crafty.math.randomInt(-4, 4);
                     if(xspeed === 0 && yspeed === 0){
-                        xspeed = randRange(-4, 4);
-                        yspeed = randRange(-4, 4);
+                        xspeed = Crafty.math.randomInt(-4, 4);
+                        yspeed = Crafty.math.randomInt(-4, 4);
                     }
                     var rotation = (((Math.atan2(yspeed, xspeed))*(180/Math.PI)) * -1)+90;
                     this._rotation = rotation;
@@ -96,8 +97,66 @@ var gameInit = function () {
             })
             .collision();
         };
-        generateEnemy({x: Crafty.viewport.width / 2,y: Crafty.viewport.height / 3});
+         var generateAstroid = function (location) {
+            console.log('generateAstroid');
+            var x,y,xspeed,yspeed;
+            x = Crafty.math.randomInt(100, Crafty.viewport.width - 100) ;
+            y = Crafty.math.randomInt(100, Crafty.viewport.height - 100);
+            xspeed = Crafty.math.randomInt(-2, 2);
+            yspeed = Crafty.math.randomInt(-2, 2);
+            var rotation = (((Math.atan2(yspeed, xspeed))*(180/Math.PI)) * -1)+90; //offset 90 for sprite
 
+            Crafty.e("Actor, RandomAstroid")
+            .attr({rotation:rotation, xspeed: xspeed, yspeed: yspeed, x: x, y: y, status:10})
+            .origin("center")
+            .onHit("bullet", function (e) {
+                this.status = this.status -1;
+                if(this.status === 0){
+                    this.destroy();
+                }
+                e[0].obj.destroy();
+            })
+            .onHit("Actor", function (e) {
+                this.xspeed = this.xspeed  *-1;
+                this.yspeed = this.yspeed  *-1
+                this.x = this.x-32;
+                this.y = this.y-32;
+            })
+            .bind('Remove', function(){
+                Crafty.e("RandomExplosion").attr({
+                    x: this.x - 32,
+                    y: this.y - 12
+                });
+                Crafty.trigger('astroidDestroyed');
+            })
+            .bind("EnterFrame", function(e) {
+  
+                this.x += this.xspeed;
+                this.y -= this.yspeed;
+
+                this._rotation = this._rotation  + 2;
+                //this.rotation = 60;Math.atan2(this.yspeed, this.xspeed);
+                //if ship goes out of bounds, put him back
+                if(this._x > Crafty.viewport.width) {
+                    this.x = -64;
+                }
+                if(this._x < -64) {
+                    this.x =  Crafty.viewport.width;
+                }
+                if(this._y > Crafty.viewport.height) {
+                    this.y = -64;
+                }
+                if(this._y < -64) {
+                    this.y = Crafty.viewport.height;
+                }
+            })
+            .collision();
+        };
+        generateEnemy({x: Crafty.viewport.width / 2,y: Crafty.viewport.height / 3});
+        generateAstroid();
+        for (var i = 6; i >= 0; i--) {
+             setTimeout(generateAstroid, 100 * i);
+        };
         var player = Crafty.e("Actor, fighter, Controls")
             .attr({move: {left: false, right: false, up: false, down: false}, xspeed: 0, yspeed: 0, decay: 0.9,
                 x: Crafty.viewport.width / 2, y: Crafty.viewport.height / 2, score: 0, zIndex:2, hp: 3})
@@ -196,14 +255,13 @@ var gameInit = function () {
                     this.y = Crafty.viewport.height;
                 }
             }).collision();
-        
 
         Crafty.bind('enemyDestroyed', function () {
 
-        });  
+        });
         Crafty.bind('playerDestroyed', function (e) {
             //do something
-            Crafty.scene('the-end');
+            //Crafty.scene('the-end');
         });
     });
 };
