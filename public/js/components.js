@@ -18,12 +18,42 @@ Crafty.c("RandomExplosion", {
             });
     }
 });
+Crafty.c('ZigZag', {
+	init: function () {
+		this.bind('EnterFrame', function (e) {
+            if(e.frame % 100 === 0) {
+                xspeed = Crafty.math.randomInt(-4, 4);
+                yspeed = Crafty.math.randomInt(-4, 4);
+                if(xspeed === 0 && yspeed === 0){
+                    xspeed = Crafty.math.randomInt(-4, 4);
+                    yspeed = Crafty.math.randomInt(-4, 4);
+                }
+                var rotation = (((Math.atan2(yspeed, xspeed))*(180/Math.PI)) * -1)+90;
+                this._rotation = rotation;
+                this.xspeed = xspeed;
+                this.yspeed = yspeed;
+                this.x += this.xspeed;
+                this.y -= this.yspeed;
 
+            }else{
+                this.x += this.xspeed;
+                this.y -= this.yspeed;
+            }
+		});
+	}
+
+});
 Crafty.c("RandomAstroid", {
     init: function () {
         var rand = Crafty.math.randomInt(1, 2);
-        this.addComponent("2D", "Canvas", "astroid" + rand)
+        this.addComponent("2D", "Canvas", "astroid" + rand);
  		
 
+    }
+});
+Crafty.c("RandomSmallAstroid", {
+    init: function () {
+        var rand = Crafty.math.randomInt(1, 3);
+        this.addComponent("2D", "Canvas", "smallAstroid" + rand);
     }
 });
