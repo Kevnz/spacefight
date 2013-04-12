@@ -1,0 +1,11 @@
+extends layout
+
+block content
+    .intro
+        p Welcome to #{title}
+    #cr-stage
+        script(src='/js/test.js') 
+        script
+            YUI().use('node-base', 'event-base', 'node-menunav', function (Y) {
+                Y.on('domready', gameInit);
+            });

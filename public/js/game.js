@@ -4,7 +4,7 @@ var gameInit = function () {
     Crafty.init();
     Crafty.canvas.init();
 
-    Crafty.load(['images/sprite.png', 'images/explosion.png', 'images/astroids.png', 'images/small_astroids.png'], function () {
+    Crafty.load(['images/sprite.png', 'images/explosion.png', 'images/astroids.png', 'images/small_astroids.png','images/dmg.png'], function () {
         Crafty.sprite(64, 'images/sprite.png', {
             fighter: [0,0],
             ship: [1,0],
@@ -24,7 +24,10 @@ var gameInit = function () {
         Crafty.sprite(32, 'images/small_astroids.png', {
             smallAstroid1: [0,0],
             smallAstroid2: [1,0],
-            smallAstroid3: [2,0],
+            smallAstroid3: [2,0]
+        });
+        Crafty.sprite(15, 'images/dmg.png', {
+            dmg: [0,0]
         });
         Crafty.scene('main');
     });
@@ -49,6 +52,15 @@ var gameInit = function () {
             .origin("center")
             .onHit("bullet", function (e) {
                 this.status = this.status -1;
+                var temphitx = this.x;
+                var temphity = this.y;
+                console.log(temphitx);
+                console.log(temphity)
+                Crafty.e("Damage").attr({
+                    x:temphitx,
+                    y:temphity,  
+                    zIndex: 5
+                });
                 if(this.status === 0){
                     this.destroy();
                 }
@@ -153,7 +165,7 @@ var gameInit = function () {
             var rotation = (((Math.atan2(yspeed, xspeed))*(180/Math.PI)) * -1) + 90; //offset 90 for sprite
             Crafty.e("Actor, RandomAstroid")
             .attr({rotation:rotation, xspeed: xspeed, yspeed: yspeed, x: x, y: y, status:10})
-            .origin("center")
+            .origin("center") 
             .collision(new Crafty.polygon([0,65],[65,65],[65,0],[0,0]))
             .onHit("bullet", function (e) {
                 this.status = this.status -1;
@@ -206,7 +218,7 @@ var gameInit = function () {
         };
         generateEnemy({x: Crafty.viewport.width / 2,y: Crafty.viewport.height / 3});
         generateAstroid();
-        for (var i = 2; i >= 0; i--) {
+        for (var i = 8; i >= 0; i--) {
              setTimeout(generateAstroid, 100 * i);
         };
         var player = Crafty.e("Actor, fighter, Controls")
@@ -221,6 +233,10 @@ var gameInit = function () {
                 }
                 this.x = this.x+32;
                 this.y = this.y+32;
+                Crafty.e("Damage").attr({
+                    x:this.x,
+                    y:this.y
+                });
             })
             .bind('Remove', function(){
                 Crafty.e("RandomExplosion").attr({

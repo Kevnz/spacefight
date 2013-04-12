@@ -1,6 +1,7 @@
 
 var express = require('express'),
     routes = require('./routes'),
+    testRoute = require('./routes/test'),
     http = require('http'),
     path = require('path');
 
@@ -24,7 +25,7 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
-
+app.get('/test', testRoute.test);
 http.createServer(app).listen(app.get('port'), function(){
     console.log("Express server listening on port " + app.get('port') + " in " + app.get('env') +" mode");
 });
