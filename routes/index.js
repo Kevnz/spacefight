@@ -6,3 +6,7 @@
 exports.index = function(req, res){
   res.render('index', { title: 'Space Fight' });
 };
+
+exports.play = function(req, res){
+  res.render('index', { title: 'Space Fight' });
+};
