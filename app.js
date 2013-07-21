@@ -24,6 +24,8 @@ app.configure('development', function(){
     app.locals.pretty = true;
 });
 
+app.locals.base = '';
+
 app.get('/', routes.index);
 app.get('/test', testRoute.test);
 http.createServer(app).listen(app.get('port'), function(){

@@ -104,7 +104,6 @@ var gameInit = function () {
             var y = data.y;
             var tempX, tempY;
             for (var i = 0; i < 4; i++) {
-                console.log("loop astroid");
                 tempX = x + 32 * i;
                 tempY = y + 32 * i;
                 xspeed = Crafty.math.randomInt(-2, 2);
@@ -120,7 +119,6 @@ var gameInit = function () {
                     e[0].obj.destroy();
                 })
                 .onHit("Actor", function (e) {
-                    console.log('hit in little astroid');
                     this.destroy();
                 })
                 .bind('Remove', function(){
@@ -152,8 +150,6 @@ var gameInit = function () {
                     }
                 });
             };
-            
-            console.log('end generateSmallAstroids');
         };
         var generateAstroid = function (location) {
             console.log('generateAstroid');
